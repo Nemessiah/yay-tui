@@ -56,7 +56,7 @@ func (model AppModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		model.errorMessage = ""
 		model.packageListDisplay.Title = fmt.Sprintf("Results for \"%s\"", model.searchInputField.Value())
 		model.packageListDisplay.SetItems(convertSearchResultsToListItems(m.results))
-		model.packageListDisplay.SetSize(80, 20)
+		//model.packageListDisplay.SetSize(80, 20)
 		model.focusedComponent = focusPackageList
 		model.searchInputField.Blur()
 		return model, nil

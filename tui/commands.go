@@ -16,3 +16,14 @@ func runYaySearchCommand(searchQuery string) tea.Cmd {
 		return yaySearchResultMsg{results: results}
 	}
 }
+
+// runYayInspectCommand launches yay -Si <query> asynchronously
+func runYayInspectCommand(searchQuery string) tea.Cmd {
+	return func() tea.Msg {
+		results, err := yay.Inspect(searchQuery)
+		if err != nil {
+			return yaySearchErrorMsg{errorText: err.Error()}
+		}
+		return yaySearchResultMsg{results: results}
+	}
+}
