@@ -1,4 +1,4 @@
-module github.com/nemessiah/yay-tui
+module yay-tui
 
 go 1.25.1
 
