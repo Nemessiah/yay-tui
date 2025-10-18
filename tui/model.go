@@ -4,19 +4,25 @@ import (
 	"github.com/charmbracelet/bubbles/list"
 	"github.com/charmbracelet/bubbles/textinput"
 	tea "github.com/charmbracelet/bubbletea"
+	"github.com/evertras/bubble-table/table"
 )
 
 // Constants that track which UI element currently has focus.
 const (
-	focusSearchInput = "search_input"
-	focusPackageList = "package_list"
+	focusSearchInput  = "search_input"
+	focusPackageList  = "package_list"
+	focusPackageTable = "package_table"
 )
 
 // AppModel holds all TUI state.
 type AppModel struct {
 	searchInputField   textinput.Model
+	Width              int
+	Height             int
+	packageTable       table.Model
 	packageListDisplay list.Model
 	isSearching        bool
+	searchComplete     bool
 	errorMessage       string
 	selected           map[int]struct{}
 	focusedComponent   string
@@ -39,8 +45,10 @@ func NewAppModel() AppModel {
 
 	return AppModel{
 		searchInputField:   searchInput,
+		packageTable:       NewPackageTable(),
 		packageListDisplay: listDisplay,
 		isSearching:        false,
+		searchComplete:     false,
 		errorMessage:       "",
 		selected:           make(map[int]struct{}),
 		focusedComponent:   focusSearchInput,

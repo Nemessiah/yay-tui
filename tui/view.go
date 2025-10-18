@@ -26,6 +26,14 @@ func (model AppModel) View() string {
 		))
 	}
 
+	if model.searchComplete {
+		return lipgloss.JoinVertical(
+			lipgloss.Left,
+			model.searchInputField.View(),
+			model.packageTable.View(),
+		)
+	}
+
 	return layout.Render(fmt.Sprintf(
 		"%s\n\n%s",
 		model.searchInputField.View(),

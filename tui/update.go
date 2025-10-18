@@ -1,7 +1,6 @@
 package tui
 
 import (
-	"fmt"
 	"strings"
 
 	tea "github.com/charmbracelet/bubbletea"
@@ -12,11 +11,16 @@ func (model AppModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	var cmd tea.Cmd
 
 	switch m := msg.(type) {
+
+	case tea.WindowSizeMsg:
+		model.Width = m.Width
+		model.Height = m.Height
+		model.packageListDisplay.SetSize(model.Width-4, model.Height-4)
 	case tea.KeyMsg:
 		k := m.String()
 
 		// Global quit keys
-		if k == "ctrl+c" || k == "esc" || k == "q" {
+		if k == "ctrl+c" || k == "esc" {
 			return model, tea.Quit
 		}
 
@@ -27,7 +31,7 @@ func (model AppModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			model.searchInputField.Focus()
 			return model, nil
 		case "tab":
-			model.focusedComponent = focusPackageList
+			model.focusedComponent = focusPackageTable
 			model.searchInputField.Blur()
 			return model, nil
 		}
@@ -50,15 +54,24 @@ func (model AppModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			model.packageListDisplay, cmd = model.packageListDisplay.Update(m)
 			return model, cmd
 		}
+		switch model.focusedComponent {
+		case focusPackageTable:
+			var cmd tea.Cmd
+			model.packageTable, cmd = model.packageTable.Update(m)
+			return model, cmd
+		}
 
 	case yaySearchResultMsg:
 		model.isSearching = false
 		model.errorMessage = ""
-		model.packageListDisplay.Title = fmt.Sprintf("Results for \"%s\"", model.searchInputField.Value())
-		model.packageListDisplay.SetItems(convertSearchResultsToListItems(m.results))
-		//model.packageListDisplay.SetSize(80, 20)
-		model.focusedComponent = focusPackageList
+		// model.packageListDisplay.Title = fmt.Sprintf("Results for \"%s\"", model.searchInputField.Value())
+		// model.packageListDisplay.SetItems(convertSearchResultsToListItems(m.results))
+		// model.focusedComponent = focusPackageList
+		rows := convertSearchResultsToTableRows(m.results)
+		model.packageTable = model.packageTable.WithRows(rows)
+		model.focusedComponent = focusPackageTable
 		model.searchInputField.Blur()
+		model.searchComplete = true
 		return model, nil
 
 	case yaySearchErrorMsg:
