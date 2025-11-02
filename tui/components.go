@@ -45,12 +45,13 @@ func convertSearchResultsToTableRows(results []string) []table.Row {
 		if !strings.HasPrefix(line, " ") {
 
 			if strings.Contains(line, "/aur") {
+				before, after, cutBool = strings.Cut(line, "/")
 				rows = append(rows, table.NewRow(table.RowData{
 					"repo":        "Aur",
-					"name":        "Test",
-					"version":     "Test",
-					"description": line,
-					"installed":   "Test",
+					"name":        before,
+					"version":     after,
+					"description": "line",
+					"installed":   cutBool,
 				}))
 			} else {
 				before, after, cutBool = strings.Cut(line, "/")
