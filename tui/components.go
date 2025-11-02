@@ -44,33 +44,34 @@ func convertSearchResultsToTableRows(results []string) []table.Row {
 		line := results[i]
 		if !strings.HasPrefix(line, " ") {
 
-			before, after, cutBool = strings.Cut(line, "/")
-			if cutBool {
-				currentRepo = before
-			}
-			before, after, cutBool = strings.Cut(after, " ")
-			if cutBool {
-				currentName = before
-			}
-			before, cutBool = strings.CutSuffix(after, " ")
-			if cutBool {
-				currentVersion = before
-			}
-			currentDesc = results[i+1] // description is next line
-			if strings.Contains(line, "Installed") {
-				installed = "Installed"
-			} else {
-				installed = ""
-			}
-			if strings.HasPrefix(currentName, "aur") {
-				aurRows = append(rows, table.NewRow(table.RowData{
-					"repo":        currentRepo,
-					"name":        currentName,
-					"version":     currentVersion,
-					"description": currentDesc,
-					"installed":   installed,
+			if strings.Contains(line, "/aur") {
+				rows = append(rows, table.NewRow(table.RowData{
+					"repo":        "Aur",
+					"name":        "Test",
+					"version":     "Test",
+					"description": line,
+					"installed":   "Test",
 				}))
 			} else {
+				before, after, cutBool = strings.Cut(line, "/")
+				if cutBool {
+					currentRepo = before
+				}
+				before, after, cutBool = strings.Cut(after, " ")
+				if cutBool {
+					currentName = before
+				}
+				before, cutBool = strings.CutSuffix(after, " ")
+				if cutBool {
+					currentVersion = before
+				}
+				currentDesc = results[i+1] // description is next line
+				if strings.Contains(line, "Installed") {
+					installed = "Installed"
+				} else {
+					installed = ""
+				}
+
 				rows = append(rows, table.NewRow(table.RowData{
 					"repo":        currentRepo,
 					"name":        currentName,
@@ -78,6 +79,7 @@ func convertSearchResultsToTableRows(results []string) []table.Row {
 					"description": currentDesc,
 					"installed":   installed,
 				}))
+
 			}
 
 		} else {
